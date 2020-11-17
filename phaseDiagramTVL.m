@@ -1,4 +1,4 @@
-function [] = phaseDiagramT_XY(comp1, comp2, P)
+function [] = phaseDiagramTVL(comp1, comp2, P)
 % pressure in mmHg, temperature in C
     components = readvars('antoinesCoefficients.xlsx', 'Range', 'A2:A147');
     [matA, matB, matC] = readvars('antoinesCoefficients.xlsx', 'Range', 'B2:D147');
@@ -6,7 +6,7 @@ function [] = phaseDiagramT_XY(comp1, comp2, P)
     A2 = 0; B2 = 0; C2 = 0;
     found1 = false; found2 = false;
     numPts = 100;
-    liqFract1 = zeros(1, numPts); liqFract2 = zeros(1, numPts)
+    liqFract1 = zeros(1, numPts); liqFract2 = zeros(1, numPts);
     vapFract1 = zeros(1, numPts); vapFract2 = zeros(1, numPts);
     % linear search for components O(n), where n is number of components
     % in excel spreadsheet
@@ -50,4 +50,18 @@ function [] = phaseDiagramT_XY(comp1, comp2, P)
         vapFract1(i) = (liqFract1(i)*pSat1) / P;
         vapFract2(i) = 1 - vapFract1(i);
     end
+    figureDesc = "T vs. XY Phase Diagram of a " + comp1 + " + " + comp2 + " mixture @P = " + P + " mmHg";
+    figure('Name', figureDesc)
+    plot(liqFract1, temps)
+    hold on
+    plot(vapFract1, temps)
+    title(figureDesc)
+    ylabel('Temperature T [°C]')
+    xLab = "x " + comp1 + ", y " + comp1 + " [mol/mol]";
+    xlabel(xLab)
+    xlim([0, 1])
+    grid on
+    grid minor
+    
+    
 end
