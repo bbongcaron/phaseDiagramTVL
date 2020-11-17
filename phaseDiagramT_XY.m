@@ -1,4 +1,5 @@
 function [] = phaseDiagramT_XY(comp1, comp2, P)
+% pressure in mmHg, temperature in C
     components = readvars('antoinesCoefficients.xlsx', 'Range', 'A2:A147');
     [matA, matB, matC] = readvars('antoinesCoefficients.xlsx', 'Range', 'B2:D147');
     A1 = 0; B1 = 0; C1 = 0;
@@ -28,4 +29,6 @@ function [] = phaseDiagramT_XY(comp1, comp2, P)
         disp("Quitting program...");
         return;
     end
+    tSat1 = (B1 / (A1 - log10(P))) - C1;
+    tSat2 = (B2 / (A2 - log10(P))) - C2;
 end
