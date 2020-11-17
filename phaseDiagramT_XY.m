@@ -5,6 +5,11 @@ function [] = phaseDiagramT_XY(comp1, comp2, P)
     A1 = 0; B1 = 0; C1 = 0;
     A2 = 0; B2 = 0; C2 = 0;
     found1 = false; found2 = false;
+    numPts = 100;
+    liqFract1 = zeros(1, numPts); liqFract2 = zeros(1, numPts)
+    vapFract1 = zeros(1, numPts); vapFract2 = zeros(1, numPts);
+    % linear search for components O(n), where n is number of components
+    % in excel spreadsheet
     for i = 1:length(components)
         if ~found1 && strcmp(lower(comp1),lower(components(i)))
             A1 = matA(i);
@@ -31,4 +36,18 @@ function [] = phaseDiagramT_XY(comp1, comp2, P)
     end
     tSat1 = (B1 / (A1 - log10(P))) - C1;
     tSat2 = (B2 / (A2 - log10(P))) - C2;
+    temps = linspace(tSat1, tSat2, numPts);
+    for i = 1:numPts
+        currentTemp = temps(i);
+        % calculation of saturation pressure at a given currentTemp
+        pSat1 = 10^(A1 - (B1 / (currentTemp + C1)));
+        pSat2 = 10^(A2 - (B2 / (currentTemp + C2)));
+        % Rearrangement of bubble point pressure eq to solve for liquid
+        % mole fraction
+        liqFract1(i) = (P - pSat2) / (pSat1 - pSat2);
+        liqFract2(i) = 1 - liqFract1(i);
+        % Rearrangement of Raoult's Law to solve for vapor mole fraction
+        vapFract1(i) = (liqFract1(i)*pSat1) / P;
+        vapFract2(i) = 1 - vapFract1(i);
+    end
 end
