@@ -20,3 +20,22 @@ For each temperature in a linearly spaced array of 100 elements:
 If a component that does not have an entry in the Excel spreadsheet of Antoine's Equation coefficients is entered, an error message will be printed
 and the program will exit.  
 Each component has its own range of temperatures for which Antoine's Equation will be accurate. Implementation of this range will be done in the future.  
+
+**Equations Used:**  
+Raoult's Law : yP = xp*  
+  - y = vapor mole fraction of component i  
+  - P = total pressure of system  
+  - x = liquid mole fraction of component i  
+  - p* = saturation pressure @T for component i  
+  
+Antoine's Equation : log10(p*) = A - (B / (T + C))  
+  - A, B & C are coefficents according to the component  
+  - p* = saturation pressure @T for component i  
+  - T = temperature  
+  - *Note* : Antoine's Equation can also be a function of pressure used to find saturation temperature (t*)  
+  
+Bubble Point Pressure Equation : P = Σ(xp*)  
+  - P = total pressure of system
+  - x = liquid mole fraction of component i
+  - p* = saturation pressure @T for component i
+  
