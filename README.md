@@ -2,7 +2,7 @@
 ***Author: Brenton Bongcaron***
 
 **Brief Description:**
-Generate a T vs. liquid/vapor mole fraction of component A (in a binary mixture of A & B) phase diagram
+Generate a T vs. liquid/vapor mole fraction of component A (in a binary mixture of A+B) phase diagram
 
 **Details:**  
 This program uses Antoine's Equation coefficients from zyBooks 14:155:201 Table 9.10.1 and a user inputted constant pressure P to calculate
