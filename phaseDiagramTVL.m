@@ -1,4 +1,8 @@
-function [] = phaseDiagramTVL(comp1, comp2, P)
+function [] = phaseDiagramTVL()
+%% (0) Request user input
+    comp1 = input("Enter Component 1 of the binary mixture (form: 'name'): ");
+    comp2 = input("Enter Component 2 of the binary mixture (form: 'name'): ");
+    P = input("Enter the pressure of the system (in mmHg): ");
 %% (1) Initialize variables and arrays
     components = readvars('antoinesCoefficients.xlsx', 'Range', 'A2:A147');
     [matA, matB, matC] = readvars('antoinesCoefficients.xlsx', 'Range', 'B2:D147');
