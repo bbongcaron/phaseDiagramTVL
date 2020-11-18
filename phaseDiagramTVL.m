@@ -1,5 +1,5 @@
 function [] = phaseDiagramTVL(comp1, comp2, P)
-% pressure in mmHg, temperature in C
+%% (1) Initialize variables and arrays
     components = readvars('antoinesCoefficients.xlsx', 'Range', 'A2:A147');
     [matA, matB, matC] = readvars('antoinesCoefficients.xlsx', 'Range', 'B2:D147');
     A1 = 0; B1 = 0; C1 = 0;
@@ -8,22 +8,22 @@ function [] = phaseDiagramTVL(comp1, comp2, P)
     numPts = 100;
     liqFract1 = zeros(1, numPts); liqFract2 = zeros(1, numPts);
     vapFract1 = zeros(1, numPts); vapFract2 = zeros(1, numPts);
-    % linear search for components O(n), where n is number of components
-    % in excel spreadsheet
+%% (2) Linear search for comp1 and comp2
     for i = 1:length(components)
-        if ~found1 && strcmp(lower(comp1),lower(components(i)))
+        if ~found1 && strcmpi(comp1,components(i))
             A1 = matA(i);
             B1 = matB(i);
             C1 = matC(i);
             found1 = true;
         end 
-        if ~found2 && strcmp(lower(comp2),lower(components(i)))
+        if ~found2 && strcmpi(comp2,components(i))
             A2 = matA(i);
             B2 = matB(i);
             C2 = matC(i);
             found2 = true;
         end
     end
+ %% (3) Error handling of non-existent components
     if ~found1 || ~found2
         if ~found1
             disp("Component 1 not found.");
@@ -34,8 +34,10 @@ function [] = phaseDiagramTVL(comp1, comp2, P)
         disp("Quitting program...");
         return;
     end
+ %% (4) Calculation of saturation temperature @P (user-input)
     tSat1 = (B1 / (A1 - log10(P))) - C1;
     tSat2 = (B2 / (A2 - log10(P))) - C2;
+ %% (5) Calculation of vapor/liquid fractions @each linearly spaced temp.
     temps = linspace(tSat1, tSat2, numPts);
     for i = 1:numPts
         currentTemp = temps(i);
@@ -50,6 +52,7 @@ function [] = phaseDiagramTVL(comp1, comp2, P)
         vapFract1(i) = (liqFract1(i)*pSat1) / P;
         vapFract2(i) = 1 - vapFract1(i);
     end
+ %% (6) Creation of phase diagram
     figureDesc = "T vs. XY Phase Diagram of a " + comp1 + " + " + comp2 + " mixture @P = " + P + " mmHg";
     figure('Name', figureDesc)
     plot(liqFract1, temps)
@@ -57,11 +60,9 @@ function [] = phaseDiagramTVL(comp1, comp2, P)
     plot(vapFract1, temps)
     title(figureDesc)
     ylabel('Temperature T [°C]')
-    xLab = "x " + comp1 + ", y " + comp1 + " [mol/mol]";
-    xlabel(xLab)
+    xlabel("x " + comp1 + ", y " + comp1 + " [mol/mol]")
     xlim([0, 1])
     grid on
     grid minor
-    
-    
+    return;
 end
