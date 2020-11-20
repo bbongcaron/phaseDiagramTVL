@@ -1,9 +1,9 @@
 function [] = phaseDiagramTVL()
-%% (0) Request user input
+%% (0) Request user input through GUI
     promptCell = {'Component 1', 'Component 2', 'Pressure [mmHg]'};
     userInfoCell = inputdlg(promptCell, 'phaseDiagramTVL Inputs', [1 1 1]);
     fields = {'c1', 'c2', 'p'};
-    userInfoStruct = cell2struct(userInfoCell, fields)
+    userInfoStruct = cell2struct(userInfoCell, fields);
     comp1 = userInfoStruct.c1;
     comp2 = userInfoStruct.c2;
     P = str2double(userInfoStruct.p);
@@ -33,11 +33,12 @@ function [] = phaseDiagramTVL()
     end
  %% (3) Error handling of non-existent components
     if ~found1 || ~found2
-        if ~found1
-            disp("Component 1 not found.");
-        end
-        if ~found2
-            disp("Component 2 not found.");
+        if ~found1 && found2
+            msgbox("Component 1 not found.", "Error");
+        elseif ~found2 && found1
+            msgbox("Component 2 not found.", "Error");
+        else
+            msgbox("Component 1 and Component 2 not found.", "Error");
         end
         disp("Quitting program...");
         return;
