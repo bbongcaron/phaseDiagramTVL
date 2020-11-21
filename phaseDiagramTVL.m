@@ -1,12 +1,6 @@
 function [] = phaseDiagramTVL()
 %% (0) Request user input through GUI
-    promptCell = {'Component 1', 'Component 2', 'Pressure [mmHg]'};
-    userInfoCell = inputdlg(promptCell, 'phaseDiagramTVL Inputs', [1 1 1]);
-    fields = {'c1', 'c2', 'p'};
-    userInfoStruct = cell2struct(userInfoCell, fields);
-    comp1 = userInfoStruct.c1;
-    comp2 = userInfoStruct.c2;
-    P = str2double(userInfoStruct.p);
+   [comp1, comp2, P] = userInput();
 %% (1) Initialize variables and arrays
     components = readvars('antoinesCoefficients.xlsx', 'Range', 'A2:A147');
     [matA, matB, matC] = readvars('antoinesCoefficients.xlsx', 'Range', 'B2:D147');
@@ -30,23 +24,14 @@ function [] = phaseDiagramTVL()
             C2 = matC(i);
             found2 = true;
         end
-    end
- %% (3) Error handling of non-existent components
-    if ~found1 || ~found2
-        if ~found1 && found2
-            msgbox("Component 1 not found.", "Error");
-        elseif ~found2 && found1
-            msgbox("Component 2 not found.", "Error");
-        else
-            msgbox("Component 1 and Component 2 not found.", "Error");
+        if found1 && found2
+            break
         end
-        disp("Quitting program...");
-        return;
     end
- %% (4) Calculation of saturation temperature @P (user-input)
+ %% (3) Calculation of saturation temperature @P (user-input)
     tSat1 = (B1 / (A1 - log10(P))) - C1;
     tSat2 = (B2 / (A2 - log10(P))) - C2;
- %% (5) Calculation of vapor/liquid fractions @each linearly spaced temp.
+ %% (4) Calculation of vapor/liquid fractions @each linearly spaced temp.
     temps = linspace(tSat1, tSat2, numPts);
     for i = 1:numPts
         currentTemp = temps(i);
@@ -61,7 +46,7 @@ function [] = phaseDiagramTVL()
         vapFract1(i) = (liqFract1(i)*pSat1) / P;
         vapFract2(i) = 1 - vapFract1(i);
     end
- %% (6) Creation of phase diagram
+ %% (5) Creation of phase diagram
     figureDesc = "T vs. XY Phase Diagram of a " + comp1 + " + " + comp2 + " mixture @P = " + P + " mmHg";
     figure('Name', figureDesc)
     plot(liqFract1, temps)
@@ -74,4 +59,32 @@ function [] = phaseDiagramTVL()
     grid on
     grid minor
     return;
+end
+
+function [comp1, comp2, P] = userInput()
+    % may be inefficient run-time wise to grab component column twice, 
+    % however big O is still O(n), where
+    % n is number of components in heatCapacity.xlsx
+    matComp = readvars('antoinesCoefficients.xlsx', 'Range', 'A2:A147');
+    len = length(matComp);
+    i = 1;
+    %% remove duplicate names
+    while i < len
+        if strcmpi(matComp(i), matComp(i+1))
+            matComp(i+1) = [];
+            len = len - 1;
+        end
+        i = i + 1;
+    end
+    %% Listdlg to choose component
+    comp1Index = listdlg('ListString', matComp, ...
+        'PromptString', 'Select Component 1:', ...
+        'ListSize', [400,400], 'SelectionMode', 'single');
+    comp1 = matComp{comp1Index}
+    comp2Index = listdlg('ListString', matComp, ...
+        'PromptString', 'Select Component 2:', ...
+        'ListSize', [400,400], 'SelectionMode', 'single');
+    comp2 = matComp{comp2Index}
+    pressureCell = inputdlg({'Pressure [mmHg]'}, 'Pressure Input', [1 50]);
+    P = str2double(pressureCell{1});
 end
