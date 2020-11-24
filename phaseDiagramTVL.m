@@ -94,7 +94,7 @@ end
 function [comp1, comp2, P] = userInput()
     % may be inefficient run-time wise to grab component column twice, 
     % however big O is still O(n), where
-    % n is number of components in heatCapacity.xlsx
+    % n is number of components in antoinesCoefficients.xlsx
     matComp = readvars('antoinesCoefficients.xlsx', 'Range', 'A2:A147');
     len = length(matComp);
     i = 1;
