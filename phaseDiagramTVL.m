@@ -76,15 +76,16 @@ function [] = phaseDiagramTVL()
     else
         figure('Name', "T vs. XY Phase Diagram of a " + comp1 + " + " + ...
             comp2 + " mixture @P = " + P + " mmHg")
-        plot(liqFract1, temps)
+        plot(liqFract1, temps, 'DisplayName', 'Liquid boundary')
         hold on
-        plot(vapFract1, temps)
+        plot(vapFract1, temps, 'DisplayName', 'Vapor boundary')
         title("T vs. XY Phase Diagram of a " + comp1 + " + " + ...
             comp2 + " mixture @P = " + P + " mmHg")
         ylabel('Temperature T [°C]')
         xlabel("x " + comp1 + ", y " + comp1 + " [mol/mol]")
         xlim([0, 1])
         ylim([min(tSat1, tSat2) - 5, max(tSat1, tSat2) + 5])
+        legend('Liquid boundary', 'Vapor boundary')
         grid on
         grid minor
     end
